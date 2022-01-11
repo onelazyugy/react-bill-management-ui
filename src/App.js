@@ -4,11 +4,13 @@ import Create from "./components/Create";
 import Edit from "./components/Edit";
 import Login from './components/Login';
 import NotFound from './components/NotFound';
+import Header from "./components/Header";
 
 function App() {
   return (
     <Router>
       <div>
+        <Header />
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/bills" component={Bill} />
