@@ -22,6 +22,16 @@ const Header = () => {
                             Create
                         </Link>
                     </Col>
+                    <Col>
+                        <Link to="/edit/1">
+                            Edit
+                        </Link>
+                    </Col>
+                    <Col>
+                        <Link to="/bills">
+                            Bill
+                        </Link>
+                    </Col>
                 </Space>
             </Row>
         </div>
