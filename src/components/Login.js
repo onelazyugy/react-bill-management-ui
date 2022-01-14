@@ -1,18 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 
 import "../App.css";
+import billmanagement from "../apis/billmanagement";
 
 const Login = () => {
-    
-  useEffect(() => {
-    login();
-  }, []);
+  const initialLoginState = {
+    isError: false,
+    message: null,
+  };
+  const [loginMsg, setLoginMsg] = useState(initialLoginState);
+  const history = useHistory();
 
-  const login = () => {};
+  const onLoginSubmit = async (values) => {
+    try {
+      const response = await billmanagement.post(
+        "/billmgnt/api/v1/login",
+        values
+      );
+      console.log(response.data);
+      if (response && response.status === 200) {
+        setLoginMsg({ isError: false, message: "success" });
+          history.push("/bills");
+      } else {
+        setLoginMsg({ isError: true, message: "failure" });
+      }
+    } catch (err) {
+      console.error(err);
+      const { message } = err.response.data.status;
+      setLoginMsg({ isError: true, message: message });
+    }
+  };
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    onLoginSubmit(values);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -62,6 +85,11 @@ const Login = () => {
               </Button>
             </Form.Item>
           </Form>
+        </Col>
+      </Row>
+      <Row justify="center">
+        <Col span={6}>
+          <div>{loginMsg.message}</div>
         </Col>
       </Row>
     </div>
