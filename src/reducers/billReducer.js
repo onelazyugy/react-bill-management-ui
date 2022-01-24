@@ -5,7 +5,7 @@ const INITIAL_STATE = [];
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case RETRIEVE_BILLS:
-            return [...state, action.payload]
+            return [...state, ...action.payload];
         default:
             return state;
     }
