@@ -23,7 +23,7 @@ const Login = () => {
       console.log(response.data);
       if (response && response.status === 200) {
         setLoginMsg({ isError: false, message: "success" });
-          history.push("/bills");
+        history.push("/bills");
       } else {
         setLoginMsg({ isError: true, message: "failure" });
       }
