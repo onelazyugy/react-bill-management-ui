@@ -4,13 +4,17 @@ import { retrieveBills } from "../actions/bill";
 import { Table, Space, Button, Tooltip, Modal } from "antd";
 import { DeleteTwoTone, EyeTwoTone, EditTwoTone } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
+import BillService from "../services/bill-services";
 
 const Bill = () => {
   const bills = useSelector((state) => state.bills);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [currentModalState, setModalState] = useState({
+    isModalVisible: false,
+    currentSelectedRecord: null,
+    billData: {username: '', password: ''},
+  });
 
   useEffect(() => {
     dispatch(retrieveBills());
@@ -65,25 +69,35 @@ const Bill = () => {
     history.push("/create");
   };
 
+  const renderBillCredential = async (record) => {
+    const response = await BillService.retrieveBillCredentialById(record.key);
+    const {username, password} = response.data;
+    setModalState({
+      isModalVisible: true,
+      currentSelectedRecord: record,
+      billData: {username, password}
+    });
+  };
+
   const showModal = (record) => {
-    setSelectedRecord(record);
-    setIsModalVisible(true);
+    renderBillCredential(record);
   };
 
   const handleOk = () => {
-    setIsModalVisible(false);
+    setModalState({
+      isModalVisible: false,
+      currentSelectedRecord: null,
+      billData: {username: '', password: ''},
+    });
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setModalState({
+      isModalVisible: false,
+      currentSelectedRecord: null,
+      billData: {username: '', password: ''},
+    });
   };
-
-  const renderSelectedRecordOntoModal = () => {
-    if(selectedRecord !== null) {
-        return(<p>{selectedRecord.accountName}</p>);
-    }
-    return(<p>no record</p>);
-  }
 
   return (
     <div style={{ padding: "5px" }}>
@@ -101,11 +115,11 @@ const Bill = () => {
       <Modal
         title="Basic Modal"
         maskClosable={false}
-        visible={isModalVisible}
+        visible={currentModalState.isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <div>{renderSelectedRecordOntoModal()}</div>
+        <div>{currentModalState.billData.username} | {currentModalState.billData.password}</div>
       </Modal>
     </div>
   );
