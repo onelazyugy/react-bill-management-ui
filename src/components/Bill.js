@@ -7,13 +7,16 @@ import { useHistory } from "react-router-dom";
 import BillService from "../services/bill-services";
 
 const Bill = () => {
+  const MODAL_DELETE = "Delete Confirmation";
+  const MODAL_VIEW = "View Credential";
   const bills = useSelector((state) => state.bills);
   const dispatch = useDispatch();
   const history = useHistory();
   const [currentModalState, setModalState] = useState({
     isModalVisible: false,
     currentSelectedRecord: null,
-    billData: {username: '', password: ''},
+    billData: { username: "", password: "" },
+    modalInfo: { type: "" },
   });
 
   useEffect(() => {
@@ -36,13 +39,21 @@ const Bill = () => {
         render: (text, record) => (
           <Space size="middle">
             <Tooltip title="view details">
-              <Button type="link" onClick={() => showModal(record)}>
+              <Button
+                type="link"
+                onClick={() =>
+                  showModal({ record: record, type: MODAL_VIEW })
+                }
+              >
                 <EyeTwoTone twoToneColor="green" style={{ fontSize: "32px" }} />
               </Button>
             </Tooltip>
 
             <Tooltip title="edit bill">
-              <Button type="link" onClick={() => showModal(record)}>
+              <Button
+                type="link"
+                onClick={() => navigateToEditBill(record.key)}
+              >
                 <EditTwoTone
                   twoToneColor="#ea561b"
                   style={{ fontSize: "32px" }}
@@ -51,7 +62,12 @@ const Bill = () => {
             </Tooltip>
 
             <Tooltip title="delete bill">
-              <Button type="link" onClick={() => showModal(record)}>
+              <Button
+                type="link"
+                onClick={() =>
+                  showModal({ record: record, type: MODAL_DELETE })
+                }
+              >
                 <DeleteTwoTone
                   twoToneColor="#cc0000"
                   style={{ fontSize: "32px" }}
@@ -69,25 +85,38 @@ const Bill = () => {
     history.push("/create");
   };
 
-  const renderBillCredential = async (record) => {
-    const response = await BillService.retrieveBillCredentialById(record.key);
-    const {username, password} = response.data;
+  const navigateToEditBill = (key) => {
+    history.push(`/edit/${key}`);
+  };
+
+  const renderBillCredential = async (modalInfo) => {
+    // if (modalInfo.type === MODAL_VIEW) {
+
+    // } else {
+
+    // }
+    const response = await BillService.retrieveBillCredentialById(
+      modalInfo.record.key
+    );
+    const { username, password } = response.data;
     setModalState({
       isModalVisible: true,
-      currentSelectedRecord: record,
-      billData: {username, password}
+      currentSelectedRecord: modalInfo.record,
+      billData: { username, password },
+      modalInfo: { type: modalInfo.type },
     });
   };
 
-  const showModal = (record) => {
-    renderBillCredential(record);
+  const showModal = (modalInfo) => {
+    renderBillCredential(modalInfo);
   };
 
   const handleOk = () => {
     setModalState({
       isModalVisible: false,
       currentSelectedRecord: null,
-      billData: {username: '', password: ''},
+      billData: { username: "", password: "" },
+      modalInfo: { type: "" },
     });
   };
 
@@ -95,7 +124,8 @@ const Bill = () => {
     setModalState({
       isModalVisible: false,
       currentSelectedRecord: null,
-      billData: {username: '', password: ''},
+      billData: { username: "", password: "" },
+      modalInfo: { type: "" },
     });
   };
 
@@ -113,13 +143,16 @@ const Bill = () => {
         </Button>
       </div>
       <Modal
-        title="Basic Modal"
+        title={currentModalState.modalInfo.type}
         maskClosable={false}
         visible={currentModalState.isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <div>{currentModalState.billData.username} | {currentModalState.billData.password}</div>
+        <div>
+          {currentModalState.billData.username} |{" "}
+          {currentModalState.billData.password}
+        </div>
       </Modal>
     </div>
   );
