@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { retrieveBills } from "../actions/bill";
 import { Table, Space, Button, Tooltip, Modal } from "antd";
@@ -7,23 +7,15 @@ import {
   EyeTwoTone,
   EditTwoTone,
   ExclamationCircleOutlined,
+  CheckOutlined
 } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import BillService from "../services/bill-services";
-import InfoModal from "./InfoModal";
 
 const Bill = () => {
-  const MODAL_DELETE = "Delete Confirmation";
-  const MODAL_VIEW = "View Credential";
   const bills = useSelector((state) => state.bills);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [currentModalState, setModalState] = useState({
-    isModalVisible: false,
-    currentSelectedRecord: null,
-    billData: { username: "", password: "" },
-    modalInfo: { type: "" },
-  });
 
   useEffect(() => {
     dispatch(retrieveBills());
@@ -44,10 +36,12 @@ const Bill = () => {
         dataIndex: "",
         render: (text, record) => (
           <Space size="middle">
-            <Tooltip title="view details">
+            <Tooltip title="view credentail">
               <Button
                 type="link"
-                onClick={() => showModal({ record: record, type: MODAL_VIEW })}
+                onClick={() =>
+                showViewCredentialModal(record)
+                }
               >
                 <EyeTwoTone twoToneColor="green" style={{ fontSize: "32px" }} />
               </Button>
@@ -88,50 +82,16 @@ const Bill = () => {
     history.push(`/edit/${key}`);
   };
 
-  const renderBillCredential = async (modalInfo) => {
-    if (modalInfo.type === MODAL_VIEW) {
-      const response = await BillService.retrieveBillCredentialById(
-        modalInfo.record.key
-      );
-      const { username, password } = response.data;
-      setModalState({
-        isModalVisible: true,
-        currentSelectedRecord: modalInfo.record,
-        billData: { username, password },
-        modalInfo: { type: modalInfo.type },
-      });
-    } else {
-    }
-  };
-
-  const showModal = (modalInfo) => {
-    renderBillCredential(modalInfo);
-  };
-
-  const handleOk = () => {
-    setModalState({
-      isModalVisible: false,
-      currentSelectedRecord: null,
-      billData: { username: "", password: "" },
-      modalInfo: { type: "" },
-    });
-  };
-
-  const handleCancel = () => {
-    setModalState({
-      isModalVisible: false,
-      currentSelectedRecord: null,
-      billData: { username: "", password: "" },
-      modalInfo: { type: "" },
-    });
-  };
-
   const showConfirmationModal = (record) => {
     Modal.confirm({
       title: "Confirm",
       icon: <ExclamationCircleOutlined />,
-      onOk() {console.log("okie")},
-      onCancel() {console.log("cancel")},
+      onOk() {
+        console.log("okie");
+      },
+      onCancel() {
+        console.log("cancel");
+      },
       content: (
         <p>
           Are you sure you want to delete <b>{record.accountName}</b>?
@@ -142,9 +102,21 @@ const Bill = () => {
     });
   };
 
-//   const showViewCredentialModal = (modalInfo) => {
-//     renderBillCredential(modalInfo);
-//   }
+  const showViewCredentialModal = async (record) => {
+    const response = await BillService.retrieveBillCredentialById(
+      record.key
+    );
+    const { username, password } = response.data;
+    Modal.success({
+      title: "View Credential",
+      icon: <CheckOutlined />,
+      onOk() {
+        console.log("okie");
+      },
+      content: <p>{username} | {password}</p>,
+      okText: "Close",
+    });
+  };
 
   return (
     <div style={{ padding: "5px" }}>
@@ -159,14 +131,6 @@ const Bill = () => {
           NEW BILL
         </Button>
       </div>
-      <InfoModal
-        title={currentModalState.modalInfo.type}
-        maskClosable={false}
-        visible={currentModalState.isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        data={currentModalState}
-      />
     </div>
   );
 };
