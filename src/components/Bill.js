@@ -2,9 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { retrieveBills } from "../actions/bill";
 import { Table, Space, Button, Tooltip, Modal } from "antd";
-import { DeleteTwoTone, EyeTwoTone, EditTwoTone } from "@ant-design/icons";
+import {
+  DeleteTwoTone,
+  EyeTwoTone,
+  EditTwoTone,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import BillService from "../services/bill-services";
+import InfoModal from "./InfoModal";
 
 const Bill = () => {
   const MODAL_DELETE = "Delete Confirmation";
@@ -41,9 +47,7 @@ const Bill = () => {
             <Tooltip title="view details">
               <Button
                 type="link"
-                onClick={() =>
-                  showModal({ record: record, type: MODAL_VIEW })
-                }
+                onClick={() => showModal({ record: record, type: MODAL_VIEW })}
               >
                 <EyeTwoTone twoToneColor="green" style={{ fontSize: "32px" }} />
               </Button>
@@ -62,12 +66,7 @@ const Bill = () => {
             </Tooltip>
 
             <Tooltip title="delete bill">
-              <Button
-                type="link"
-                onClick={() =>
-                  showModal({ record: record, type: MODAL_DELETE })
-                }
-              >
+              <Button type="link" onClick={() => showConfirmationModal(record)}>
                 <DeleteTwoTone
                   twoToneColor="#cc0000"
                   style={{ fontSize: "32px" }}
@@ -90,21 +89,19 @@ const Bill = () => {
   };
 
   const renderBillCredential = async (modalInfo) => {
-    // if (modalInfo.type === MODAL_VIEW) {
-
-    // } else {
-
-    // }
-    const response = await BillService.retrieveBillCredentialById(
-      modalInfo.record.key
-    );
-    const { username, password } = response.data;
-    setModalState({
-      isModalVisible: true,
-      currentSelectedRecord: modalInfo.record,
-      billData: { username, password },
-      modalInfo: { type: modalInfo.type },
-    });
+    if (modalInfo.type === MODAL_VIEW) {
+      const response = await BillService.retrieveBillCredentialById(
+        modalInfo.record.key
+      );
+      const { username, password } = response.data;
+      setModalState({
+        isModalVisible: true,
+        currentSelectedRecord: modalInfo.record,
+        billData: { username, password },
+        modalInfo: { type: modalInfo.type },
+      });
+    } else {
+    }
   };
 
   const showModal = (modalInfo) => {
@@ -129,6 +126,26 @@ const Bill = () => {
     });
   };
 
+  const showConfirmationModal = (record) => {
+    Modal.confirm({
+      title: "Confirm",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {console.log("okie")},
+      onCancel() {console.log("cancel")},
+      content: (
+        <p>
+          Are you sure you want to delete <b>{record.accountName}</b>?
+        </p>
+      ),
+      okText: "Delete",
+      cancelText: "Cancel",
+    });
+  };
+
+//   const showViewCredentialModal = (modalInfo) => {
+//     renderBillCredential(modalInfo);
+//   }
+
   return (
     <div style={{ padding: "5px" }}>
       <div>{renderBills()}</div>
@@ -142,18 +159,14 @@ const Bill = () => {
           NEW BILL
         </Button>
       </div>
-      <Modal
+      <InfoModal
         title={currentModalState.modalInfo.type}
         maskClosable={false}
         visible={currentModalState.isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-      >
-        <div>
-          {currentModalState.billData.username} |{" "}
-          {currentModalState.billData.password}
-        </div>
-      </Modal>
+        data={currentModalState}
+      />
     </div>
   );
 };
