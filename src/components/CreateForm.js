@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Row, Col, Space } from "antd";
+import BillService from "../services/bill-services";
+import { render } from "@testing-library/react";
 
-const CreateForm = () => {
+const CreateForm = (props) => {
   const { TextArea } = Input;
+  const bill = props.bill;
+  const defaultBill = {
+    accountName: 'default', company: '',
+    username: '', password: '', 
+    tags: [''], description: ''
+  };
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -15,14 +23,33 @@ const CreateForm = () => {
   const onChange = (e) => {
     console.log("Change:", e.target.value);
   };
-  return (
+
+  const onClearClick = () => {
+
+  };
+
+  const renderBill = () => {
+    if(bill !== null) {
+      //from edit route
+      console.log('bill: ', bill.accountName);
+      return <p>{bill.accountName}</p>;
+    } else {
+      //from create route
+      console.log('defaultBill: ', defaultBill.accountName);
+      return <p>{defaultBill.accountName}</p>;
+    }
+  };
+
+  return(
     <div>
+      bill: {renderBill()}
       <Row justify="center">
         <Col span={6}>
           <Form
             layout={"vertical"}
             name="create"
-            initialValues={{ remember: true }}
+            // initialValues={{...values}}
+            
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -61,7 +88,7 @@ const CreateForm = () => {
 
             <Form.Item
               label="Tag"
-              name="tag"
+              name="tags"
               rules={[{ required: true, message: "Please input tag!" }]}
             >
               <Input size="large" />
@@ -89,7 +116,7 @@ const CreateForm = () => {
 
             <Form.Item>
               <Button
-                htmlType="submit"
+                onClick={onClearClick}
                 style={{ width: "100%" }}
                 size="large"
               >

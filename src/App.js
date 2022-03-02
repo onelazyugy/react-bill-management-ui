@@ -5,6 +5,7 @@ import Edit from "./components/Edit";
 import Login from './components/Login';
 import NotFound from './components/NotFound';
 import Header from "./components/Header";
+import POC from "./components/POC";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route exact path="/create" component={Create} />
           <Route exact path="/edit/:id" component={Edit} />
           <Route exact path="/not-found" component={NotFound} />
+          <Route exact path="/poc" component={POC} />
           <Redirect from="*" to="/not-found" />
         </Switch>
       </div>

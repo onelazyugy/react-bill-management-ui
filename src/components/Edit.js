@@ -1,10 +1,23 @@
-import React from 'react';
-import CreateForm from './CreateForm';
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import CreateForm from "./CreateForm";
+import BillService from "../services/bill-services";
 
-const Edit = () => {
-    return (
-        <CreateForm />
-    )
+const Edit = (props) => {
+    const {id} = props.match.params;
+    const [bill, setBill] = useState(null);
+
+    useEffect(() => {
+        if (id !== undefined) {
+            const retrieveBillById = async () => {
+                const { data } = await BillService.retrieveBillById(id);
+                setBill(data);
+            };
+            retrieveBillById();
+        }
+    }, []);
+
+    return <CreateForm bill={bill} />;
 };
 
 export default Edit;
