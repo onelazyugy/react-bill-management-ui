@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Row, Col, Space } from "antd";
-import BillService from "../services/bill-services";
-import { render } from "@testing-library/react";
 
 const CreateForm = (props) => {
   const { TextArea } = Input;
+  const formRef = React.createRef();
   const bill = props.bill;
   const defaultBill = {
     accountName: 'default', company: '',
     username: '', password: '', 
     tags: [''], description: ''
   };
+
+  useEffect(() => {
+    renderBill();
+  })
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -24,30 +27,33 @@ const CreateForm = (props) => {
     console.log("Change:", e.target.value);
   };
 
-  const onClearClick = () => {
-
+  const onReset = () => {
+    formRef.current.resetFields();
   };
 
   const renderBill = () => {
-    if(bill !== null) {
-      //from edit route
-      console.log('bill: ', bill.accountName);
-      return <p>{bill.accountName}</p>;
-    } else {
-      //from create route
-      console.log('defaultBill: ', defaultBill.accountName);
-      return <p>{defaultBill.accountName}</p>;
+    if(bill !== null && bill !== undefined) {
+      if(formRef.current !== null) {
+        formRef.current.setFieldsValue({
+          accountName: bill.accountName,
+          company: bill.company,
+          userName: bill.userName,
+          password: bill.password,
+          tags: bill.tags,
+          description: bill.description
+        });
+      }
     }
   };
 
   return(
     <div>
-      bill: {renderBill()}
       <Row justify="center">
         <Col span={6}>
           <Form
             layout={"vertical"}
             name="create"
+            ref={formRef}
             // initialValues={{...values}}
             
             onFinish={onFinish}
@@ -56,7 +62,7 @@ const CreateForm = (props) => {
           >
             <Form.Item
               label="Account Name"
-              name="accountname"
+              name="accountName"
               rules={[{ required: true, message: "Please input name!" }]}
             >
               <Input size="large" />
@@ -72,7 +78,7 @@ const CreateForm = (props) => {
 
             <Form.Item
               label="User Name"
-              name="username"
+              name="userName"
               rules={[{ required: true, message: "Please input user name!" }]}
             >
               <Input size="large" />
@@ -116,7 +122,7 @@ const CreateForm = (props) => {
 
             <Form.Item>
               <Button
-                onClick={onClearClick}
+                onClick={onReset}
                 style={{ width: "100%" }}
                 size="large"
               >
