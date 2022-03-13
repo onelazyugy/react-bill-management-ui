@@ -6,11 +6,6 @@ const CreateForm = (props) => {
   const { TextArea } = Input;
   const formRef = React.createRef();
   const bill = props.bill;
-  const defaultBill = {
-    accountName: 'default', company: '',
-    username: '', password: '', 
-    tags: [''], description: ''
-  };
   const [createBtnDisabled, setCreateBtnDisabled] = useState(true);
 
   useEffect(() => {
@@ -22,7 +17,11 @@ const CreateForm = (props) => {
   });
 
   const onFinish = (values) => {
-    props.onUpdate(values);
+    if(bill) {
+      props.onUpdate(values);
+    } else {
+      console.log('create mode: ', values);
+    }
   };
 
   const onChange = () => {
