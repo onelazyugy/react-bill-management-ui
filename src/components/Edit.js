@@ -17,7 +17,11 @@ const Edit = (props) => {
         }
     }, []);
 
-    return <CreateForm bill={bill} />;
+    const updateBill = (values) => {
+        console.log('updating...', values);
+    }
+
+    return <CreateForm bill={bill} onUpdate={updateBill}/>;
 };
 
 export default Edit;

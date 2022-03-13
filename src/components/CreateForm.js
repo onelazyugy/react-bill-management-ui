@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Row, Col, Space } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 const CreateForm = (props) => {
   const { TextArea } = Input;
@@ -10,21 +11,35 @@ const CreateForm = (props) => {
     username: '', password: '', 
     tags: [''], description: ''
   };
+  const [createBtnDisabled, setCreateBtnDisabled] = useState(true);
 
   useEffect(() => {
-    renderBill();
-  })
+    if(formRef.current) {
+      if(!formRef.current.isFieldsTouched()) {
+        renderBill();
+      }
+    }
+  });
 
   const onFinish = (values) => {
-    console.log("Success:", values);
+    props.onUpdate(values);
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const onChange = (e) => {
-    console.log("Change:", e.target.value);
+  const onChange = () => {
+    const accountName = formRef.current.getFieldValue('accountName');
+    const company = formRef.current.getFieldValue('company');
+    const userName = formRef.current.getFieldValue('userName');
+    const password = formRef.current.getFieldValue('password');
+    const tags = formRef.current.getFieldValue('tags');
+    if((accountName !== '' && accountName !== undefined) && 
+        (company !== '' && company !== undefined) && 
+        (userName !== '' && userName !== undefined) && 
+        (password !== '' && password !== undefined) && 
+        (tags !== '' && tags !== undefined)) {
+      setCreateBtnDisabled(false)
+    } else {
+      setCreateBtnDisabled(true)
+    }
   };
 
   const onReset = () => {
@@ -54,10 +69,7 @@ const CreateForm = (props) => {
             layout={"vertical"}
             name="create"
             ref={formRef}
-            // initialValues={{...values}}
-            
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
@@ -65,7 +77,7 @@ const CreateForm = (props) => {
               name="accountName"
               rules={[{ required: true, message: "Please input name!" }]}
             >
-              <Input size="large" />
+              <Input size="large" placeholder="account name" onChange={onChange}/>
             </Form.Item>
 
             <Form.Item
@@ -73,7 +85,7 @@ const CreateForm = (props) => {
               name="company"
               rules={[{ required: true, message: "Please input company!" }]}
             >
-              <Input size="large" />
+              <Input size="large" placeholder="company" onChange={onChange}/>
             </Form.Item>
 
             <Form.Item
@@ -81,7 +93,7 @@ const CreateForm = (props) => {
               name="userName"
               rules={[{ required: true, message: "Please input user name!" }]}
             >
-              <Input size="large" />
+              <Input size="large" placeholder="username" onChange={onChange}/>
             </Form.Item>
 
             <Form.Item
@@ -89,7 +101,12 @@ const CreateForm = (props) => {
               name="password"
               rules={[{ required: true, message: "Please input password!" }]}
             >
-              <Input size="large" />
+              <Input.Password
+                size="large"
+                placeholder="password"
+                iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                onChange={onChange}
+              />
             </Form.Item>
 
             <Form.Item
@@ -97,7 +114,7 @@ const CreateForm = (props) => {
               name="tags"
               rules={[{ required: true, message: "Please input tag!" }]}
             >
-              <Input size="large" />
+              <Input size="large" placeholder="tags" onChange={onChange} />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
@@ -105,7 +122,6 @@ const CreateForm = (props) => {
                 showCount
                 maxLength={100}
                 style={{ height: 120 }}
-                onChange={onChange}
               />
             </Form.Item>
 
@@ -115,6 +131,7 @@ const CreateForm = (props) => {
                 htmlType="submit"
                 style={{ width: "100%" }}
                 size="large"
+                disabled={createBtnDisabled}
               >
                 CREATE
               </Button>
