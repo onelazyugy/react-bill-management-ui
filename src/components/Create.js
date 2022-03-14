@@ -5,22 +5,13 @@ import "../App.css";
 
 
 const Create = () => {
-//   const { TextArea } = Input;
 
-//   const onFinish = (values) => {
-//     console.log("Success:", values);
-//   };
-
-//   const onFinishFailed = (errorInfo) => {
-//     console.log("Failed:", errorInfo);
-//   };
-
-//   const onChange = (e) => {
-//     console.log("Change:", e.target.value);
-//   };
+  const createBill = (values) => {
+    console.log('creating...', values);
+  }
 
   return (
-    <CreateForm />
+    <CreateForm onFinish={createBill} />
   );
 };
 

@@ -18,9 +18,9 @@ const CreateForm = (props) => {
 
   const onFinish = (values) => {
     if(bill) {
-      props.onUpdate(values);
+      props.onFinish(values);
     } else {
-      console.log('create mode: ', values);
+      props.onFinish(values);
     }
   };
 
@@ -132,7 +132,7 @@ const CreateForm = (props) => {
                 size="large"
                 disabled={createBtnDisabled}
               >
-                CREATE
+                SUBMIT
               </Button>
             </Form.Item>
 
