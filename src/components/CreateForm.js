@@ -3,65 +3,25 @@ import { Form, Input, Button, Row, Col, Space } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 const CreateForm = (props) => {
+  const [form] = Form.useForm();
   const { TextArea } = Input;
-  const formRef = React.createRef();
   const bill = props.bill;
   const [createBtnDisabled, setCreateBtnDisabled] = useState(true);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
-    if(formRef.current) {
-      if(!formRef.current.isFieldsTouched()) {
+    if(form) {
+      if(!form.isFieldsTouched()) {
         renderBill();
       }
     }
   });
 
-  const onFinish = async (values) => {
-    setStatus('submitting...');
-    const tags = values.tags.split(',');
-    values.tags = tags;
-    const response = await props.onFinish(values);
-    console.log('response from form: ', response);
-    
-    if(response.status === 201) {
-      // if(formRef.current){
-        setStatus('done...');
-      // }
-    } else {
-      setStatus('error...');
-    }
-  };
-
-  const onChange = () => {
-    const accountName = formRef.current.getFieldValue('accountName');
-    const company = formRef.current.getFieldValue('company');
-    const userName = formRef.current.getFieldValue('userName');
-    const password = formRef.current.getFieldValue('password');
-    const tags = formRef.current.getFieldValue('tags');
-    if((accountName !== '' && accountName !== undefined) && 
-        (company !== '' && company !== undefined) && 
-        (userName !== '' && userName !== undefined) && 
-        (password !== '' && password !== undefined) && 
-        (tags !== '' && tags !== undefined)) {
-      setCreateBtnDisabled(false)
-    } else {
-      setCreateBtnDisabled(true)
-    }
-  };
-
-  const onReset = () => {
-    clearForm();
-  };
-
-  const clearForm = () => {
-    formRef.current.resetFields();
-  }
-
   const renderBill = () => {
+    console.log(createBtnDisabled);
     if(bill !== null && bill !== undefined) {
-      if(formRef.current !== null) {
-        formRef.current.setFieldsValue({
+      if(form !== null) {
+        form.setFieldsValue({
           accountName: bill.accountName,
           company: bill.company,
           userName: bill.userName,
@@ -73,17 +33,48 @@ const CreateForm = (props) => {
     }
   };
 
-  return(
+  const onFinish = (values) => {
+    console.log(values);
+    setStatus('submitting...');
+    const tags = values.tags.split(',');
+    values.tags = tags;
+    // const response = await props.onFinish(values);
+    // console.log('response from form: ', response);
+    
+    // if(response.status === 201) {
+    //     setStatus('done...');
+    // } else {
+    //   setStatus('error...');
+    // }
+  };
+
+  const onReset = () => {
+    form.resetFields();
+    setCreateBtnDisabled(true)
+  };
+
+  const onChange = () => {
+    const accountName = form.getFieldValue('accountName');
+    const company = form.getFieldValue('company');
+    const userName = form.getFieldValue('userName');
+    const password = form.getFieldValue('password');
+    const tags = form.getFieldValue('tags');
+    if((accountName !== '' && accountName !== undefined) && 
+        (company !== '' && company !== undefined) && 
+        (userName !== '' && userName !== undefined) && 
+        (password !== '' && password !== undefined) && 
+        (tags !== '' && tags !== undefined)) {
+      setCreateBtnDisabled(false)
+    } else {
+      setCreateBtnDisabled(true)
+    }
+  };
+
+  return (
     <div>
       <Row justify="center">
         <Col span={6}>
-          <Form
-            layout={"vertical"}
-            name="create"
-            ref={formRef}
-            onFinish={onFinish}
-            autoComplete="off"
-          >
+          <Form layout={"vertical"} form={form} name="control-hooks" onFinish={onFinish} autoComplete="off">
             <Form.Item
               label="Account Name"
               name="accountName"
@@ -162,8 +153,10 @@ const CreateForm = (props) => {
           status: {status}
         </Col>
       </Row>
-    </div>
+    </div >
   );
 };
 
 export default CreateForm;
+
+
