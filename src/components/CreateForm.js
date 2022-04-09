@@ -18,16 +18,16 @@ const CreateForm = (props) => {
   });
 
   const renderBill = () => {
-    console.log(createBtnDisabled);
     if(bill !== null && bill !== undefined) {
       if(form !== null) {
+        const {accountName, company, userName, password, tags, description} = bill;
         form.setFieldsValue({
-          accountName: bill.accountName,
-          company: bill.company,
-          userName: bill.userName,
-          password: bill.password,
-          tags: bill.tags,
-          description: bill.description
+          accountName,
+          company,
+          userName,
+          password,
+          tags,
+          description
         });
       }
     }
