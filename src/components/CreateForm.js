@@ -7,6 +7,7 @@ const CreateForm = (props) => {
   const formRef = React.createRef();
   const bill = props.bill;
   const [createBtnDisabled, setCreateBtnDisabled] = useState(true);
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     if(formRef.current) {
@@ -16,11 +17,19 @@ const CreateForm = (props) => {
     }
   });
 
-  const onFinish = (values) => {
-    if(bill) {
-      props.onFinish(values);
+  const onFinish = async (values) => {
+    setStatus('submitting...');
+    const tags = values.tags.split(',');
+    values.tags = tags;
+    const response = await props.onFinish(values);
+    console.log('response from form: ', response);
+    
+    if(response.status === 201) {
+      // if(formRef.current){
+        setStatus('done...');
+      // }
     } else {
-      props.onFinish(values);
+      setStatus('error...');
     }
   };
 
@@ -42,8 +51,12 @@ const CreateForm = (props) => {
   };
 
   const onReset = () => {
-    formRef.current.resetFields();
+    clearForm();
   };
+
+  const clearForm = () => {
+    formRef.current.resetFields();
+  }
 
   const renderBill = () => {
     if(bill !== null && bill !== undefined) {
@@ -146,6 +159,7 @@ const CreateForm = (props) => {
               </Button>
             </Form.Item>
           </Form>
+          status: {status}
         </Col>
       </Row>
     </div>
