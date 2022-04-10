@@ -5,7 +5,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 const CreateForm = (props) => {
   const [form] = Form.useForm();
   const { TextArea } = Input;
-  const bill = props.bill;
+  const {bill} = props;
   const [createBtnDisabled, setCreateBtnDisabled] = useState(true);
   const [status, setStatus] = useState('');
 
@@ -20,6 +20,7 @@ const CreateForm = (props) => {
   const renderBill = () => {
     if(bill !== null && bill !== undefined) {
       if(form !== null) {
+        console.log('createBtnDisabled: ', createBtnDisabled);
         const {accountName, company, userName, password, tags, description} = bill;
         form.setFieldsValue({
           accountName,
@@ -33,19 +34,19 @@ const CreateForm = (props) => {
     }
   };
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log(values);
     setStatus('submitting...');
     const tags = values.tags.split(',');
     values.tags = tags;
-    // const response = await props.onFinish(values);
-    // console.log('response from form: ', response);
+    const response = await props.onFinish(values);
+    console.log('response from form: ', response);
     
-    // if(response.status === 201) {
-    //     setStatus('done...');
-    // } else {
-    //   setStatus('error...');
-    // }
+    if(response.status === 201) {
+        setStatus('done...');
+    } else {
+      setStatus('error...');
+    }
   };
 
   const onReset = () => {
@@ -150,7 +151,7 @@ const CreateForm = (props) => {
               </Button>
             </Form.Item>
           </Form>
-          status: {status}
+          {status}
         </Col>
       </Row>
     </div >

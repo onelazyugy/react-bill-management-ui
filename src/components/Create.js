@@ -13,9 +13,9 @@ const Create = () => {
   //   return response;
   // }
 
-  const createBill = (values) => {
-    console.log('creating...', values);
-    return BillService.createBill(values);
+  const createBill = (bill) => {
+    console.log('creating...', bill);
+    return BillService.createBill(bill);
   }
 
   return (
