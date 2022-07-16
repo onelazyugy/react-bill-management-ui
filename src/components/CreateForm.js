@@ -34,18 +34,31 @@ const CreateForm = (props) => {
     }
   };
 
-  const onFinish = async (values) => {
-    console.log(values);
-    setStatus('submitting...');
-    const tags = values.tags.split(',');
-    values.tags = tags;
-    const response = await props.onFinish(values);
-    console.log('response from form: ', response);
-    
-    if(response.status === 201) {
-        setStatus('done...');
-    } else {
-      setStatus('error...');
+  const onFinish = async (billValue) => {
+    try {
+      console.log(billValue);
+      setStatus('submitting...');
+      console.log(bill);
+      let {tags} = billValue;
+      tags = tags.split(',');
+      if(bill === undefined) {
+        billValue = {...billValue, tags: tags, key: null};
+      } else {
+        billValue = {...billValue, tags: tags, key: bill.key};
+      }
+      const response = await props.onFinish(billValue);
+      console.log('response from form: ', response);
+      
+      if(response.status === 201) {
+          setStatus('created success...');
+      } else if(response.status === 200) {
+        setStatus('updated success...');
+      } else {
+        setStatus(`error: ${response.status}`);
+      }
+    } catch(error) {
+      console.error(error.response);
+      setStatus(`error: ${error.response.data.status.message}`);
     }
   };
 

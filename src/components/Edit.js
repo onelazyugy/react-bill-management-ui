@@ -19,7 +19,7 @@ const Edit = (props) => {
 
     const updateBill = (bill) => {
         console.log('updating...', bill);
-        BillService.updateBill(bill);
+        return BillService.updateBill(bill);
     }
 
     return <CreateForm bill={bill} onFinish={updateBill}/>;

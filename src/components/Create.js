@@ -6,13 +6,6 @@ import "../App.css";
 
 
 const Create = () => {
-
-  // const createBill = async (values) => {
-  //   console.log('creating...', values);
-  //   const response = await BillService.createBill(values);
-  //   return response;
-  // }
-
   const createBill = (bill) => {
     console.log('creating...', bill);
     return BillService.createBill(bill);

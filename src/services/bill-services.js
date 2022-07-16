@@ -13,8 +13,8 @@ const createBill = (bill) => {
 };
 
 const updateBill = (bill) => {
-  const {id} = bill;
-  return billmanagement.put(`/billmgnt/api/v1/update/${id}`)
+  const {key} = bill;
+  return billmanagement.put(`/billmgnt/api/v1/update/${key}`, bill);
 }
 
 const BillService = {
